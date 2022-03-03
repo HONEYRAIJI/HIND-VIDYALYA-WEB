@@ -1,58 +1,66 @@
-<?php 
 
-include 'config.php';
-
-session_start();
-
-error_reporting(0);
-
-if (isset($_SESSION['username'])) {
-    header("Location: welcome.php");
-}
-
-if (isset($_POST['submit'])) {
-	$email = $_POST['email'];
-	$password = md5($_POST['password']);
-
-	$sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
-	$result = mysqli_query($conn, $sql);
-	if ($result->num_rows > 0) {
-		$row = mysqli_fetch_assoc($result);
-		$_SESSION['username'] = $row['username'];
-		header("Location: welcome.php");
-	} else {
-		echo "<script>alert('Woops! Email or Password is Wrong.')</script>";
-	}
-}
-
-?>
-
+<?php require_once 'database.php'; ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="stylingg.css">
-
-	<title>Login Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Birthstone&display=swap" rel="stylesheet">
 </head>
 <body>
-	<div class="container">
-		<form action="" method="POST" class="login-email">
-			<p class="login-text" style="font-size: 2rem; font-weight: 800;">Login</p>
-			<div class="input-group">
-				<input type="email" placeholder="Email" name="email" value="<?php echo $email; ?>" required>
-			</div>
-			<div class="input-group">
-				<input type="password" placeholder="Password" name="password" value="<?php echo $_POST['password']; ?>" required>
-			</div>
-			<div class="input-group">
-				<button name="submit" class="btn">Login</button>
-			</div>
-			<p class="login-register-text">Don't have an account? <a href="register.php">Register Here</a>.</p>
-		</form>
-	</div>
+
+<h3>Contact Form</h3>
+
+<div class="container">
+
+    <form action="" method="post">
+        <label for="fname">First Name</label>
+        <input type="text" id="fname" name="fname" placeholder="Your name..">
+
+        <label for="lname">Last Name</label>
+        <input type="text" id="lname" name="lname" placeholder="Your last name..">
+
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" placeholder="Your Email Address..">
+
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" placeholder="Subject..">
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Write something.." style="height:200px"></textarea>
+
+        <input type="submit" name="submit" value="Submit">
+    </form>
+
+</div>
+
 </body>
 </html>
+
+<?php
+if (!empty($_POST['submit'])){
+
+    $fname = $_POST['fname'];
+    $lname = $_POST['lname'];
+    $email = $_POST['email'];
+    $subject = $_POST['subject'];
+    $message = $_POST['message'];
+
+    $sql = "INSERT INTO contact_inquiry (fname, lname, email, subject, message) 
+            values ('$fname', '$lname', '$email', '$subject', '$message')";
+
+    if (mysqli_query($conn, $sql)){
+        echo "New record added successfully";
+    }else{
+        echo "Error : ". $sql . "<br>" . mysqli_error($conn);
+    }
+
+    mysqli_close($conn);
+
+
+}
+
+
+?>
